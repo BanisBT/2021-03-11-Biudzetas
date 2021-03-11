@@ -29,4 +29,12 @@ public class IncomeRecord {
                 "ID | Suma | Data | Info" + '\n' +
                 id + " | " + amount + " | " + dateTime.format(dtf) + " | " + info + '\n';
     }
+
+    public long getAmount() {
+        return amount;
+    }
+
+    public long getId() {
+        return id;
+    }
 }

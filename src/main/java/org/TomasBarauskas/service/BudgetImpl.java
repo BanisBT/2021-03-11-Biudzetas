@@ -1,5 +1,6 @@
 package org.TomasBarauskas.service;
 
+import org.TomasBarauskas.excetions.NoRecordByID;
 import org.TomasBarauskas.modul.ExpenseRecord;
 import org.TomasBarauskas.modul.IncomeRecord;
 
@@ -35,4 +36,63 @@ public class BudgetImpl implements Budget {
         return expenseRecords;
     }
 
+    @Override
+    public long balance() {
+        long balance = 0;
+        for (IncomeRecord record : incomeRecords) {
+            balance += record.getAmount();
+        }
+        for (ExpenseRecord record : expenseRecords) {
+            balance -= record.getAmount();
+        }
+        return balance;
+    }
+
+    @Override
+    public void removeIncomeRecord(long incomeIdNumber) throws NoRecordByID {
+        IncomeRecord incomeRecordToDelete = doesIncomeRecordExist(incomeIdNumber);
+        incomeRecords.remove(incomeRecordToDelete);
+    }
+
+    @Override
+    public void removeExpenseRecord(long expenseIdNumber) throws NoRecordByID {
+        ExpenseRecord expenseRecordToDelete = doesExpenseRecordExist(expenseIdNumber);
+        expenseRecords.remove(expenseRecordToDelete);
+    }
+
+    @Override
+    public ArrayList<Long> getIncomeRecordsID() {
+        ArrayList<Long> incomesID = new ArrayList<>();
+        for (IncomeRecord record : incomeRecords){
+            incomesID.add(record.getId());
+        }
+        return incomesID;
+    }
+
+    @Override
+    public ArrayList<Long> getExpenseRecordsID() {
+        ArrayList<Long> expensesID = new ArrayList<>();
+        for (ExpenseRecord record : expenseRecords){
+            expensesID.add(record.getId());
+        }
+        return expensesID;
+    }
+
+    private IncomeRecord doesIncomeRecordExist(long incomeIdNumber) throws NoRecordByID {
+        for (IncomeRecord record : incomeRecords) {
+            if (record.getId() == incomeIdNumber) {
+                return record;
+            }
+        }
+        throw new NoRecordByID();
+    }
+
+    private ExpenseRecord doesExpenseRecordExist(long expenseIdNumber) throws NoRecordByID {
+        for (ExpenseRecord record : expenseRecords) {
+            if (record.getId() == expenseIdNumber) {
+                return record;
+            }
+        }
+        throw new NoRecordByID();
+    }
 }
