@@ -1,8 +1,10 @@
 package org.TomasBarauskas.service;
 
+import org.TomasBarauskas.excetions.NoRecordByID;
 import org.TomasBarauskas.modul.ExpenseRecord;
 import org.TomasBarauskas.modul.IncomeRecord;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface Budget {
@@ -13,4 +15,14 @@ public interface Budget {
     List<IncomeRecord> getIncomeRecords();
 
     List<ExpenseRecord> getExpenseRecords();
+
+    long balance();
+
+    void removeIncomeRecord(long incomeIdNumber) throws NoRecordByID;
+
+    void removeExpenseRecord(long expenseIdNumber) throws NoRecordByID;
+
+    ArrayList<Long> getIncomeRecordsID();
+
+    ArrayList<Long> getExpenseRecordsID();
 }
