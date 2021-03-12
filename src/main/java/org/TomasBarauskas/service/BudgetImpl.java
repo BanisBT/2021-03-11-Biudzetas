@@ -2,43 +2,54 @@ package org.TomasBarauskas.service;
 
 import org.TomasBarauskas.excetions.NoRecordByID;
 import org.TomasBarauskas.modul.ExpenseRecord;
+import org.TomasBarauskas.modul.FinanceRecord;
 import org.TomasBarauskas.modul.IncomeRecord;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BudgetImpl implements Budget {
-    private List<IncomeRecord> incomeRecords;
-    private List<ExpenseRecord> expenseRecords;
+    private List<FinanceRecord> financeRecords;
 
     public BudgetImpl() {
-        incomeRecords = new ArrayList<>();
-        expenseRecords = new ArrayList<>();
+        financeRecords = new ArrayList<>();
     }
 
     @Override
-    public void addIncomeRecord(long amount, String info) {
-        incomeRecords.add(new IncomeRecord(amount, info));
-    }
-
-    @Override
-    public void addExpenseRecord(long amount, String info) {
-        expenseRecords.add(new ExpenseRecord(amount, info));
+    public void addFinanceRecord(FinanceRecord financeRecord) {
+        financeRecords.add(financeRecord);
     }
 
     @Override
     public List<IncomeRecord> getIncomeRecords() {
+        List<IncomeRecord> incomeRecords = new ArrayList<>();
+
+        for (FinanceRecord record : financeRecords) {
+            if (record instanceof IncomeRecord) {
+                incomeRecords.add((IncomeRecord) record);
+            }
+        }
         return incomeRecords;
     }
 
     @Override
     public List<ExpenseRecord> getExpenseRecords() {
+        List<ExpenseRecord> expenseRecords = new ArrayList<>();
+
+        for (FinanceRecord record : financeRecords) {
+            if (record instanceof ExpenseRecord) {
+                expenseRecords.add((ExpenseRecord) record);
+            }
+        }
         return expenseRecords;
     }
 
     @Override
     public long balance() {
+        List<IncomeRecord> incomeRecords = getIncomeRecords();
+        List<ExpenseRecord> expenseRecords = getExpenseRecords();
         long balance = 0;
+
         for (IncomeRecord record : incomeRecords) {
             balance += record.getAmount();
         }
@@ -49,21 +60,17 @@ public class BudgetImpl implements Budget {
     }
 
     @Override
-    public void removeIncomeRecord(long incomeIdNumber) throws NoRecordByID {
-        IncomeRecord incomeRecordToDelete = doesIncomeRecordExist(incomeIdNumber);
-        incomeRecords.remove(incomeRecordToDelete);
-    }
-
-    @Override
-    public void removeExpenseRecord(long expenseIdNumber) throws NoRecordByID {
-        ExpenseRecord expenseRecordToDelete = doesExpenseRecordExist(expenseIdNumber);
-        expenseRecords.remove(expenseRecordToDelete);
+    public void removeFinanceRecord(long financeIdNumber) throws NoRecordByID {
+        FinanceRecord financeRecord = getFinanceRecordByID(financeIdNumber);
+        financeRecords.remove(financeRecord);
     }
 
     @Override
     public ArrayList<Long> getIncomeRecordsID() {
+        List<IncomeRecord> incomeRecords = getIncomeRecords();
         ArrayList<Long> incomesID = new ArrayList<>();
-        for (IncomeRecord record : incomeRecords){
+
+        for (FinanceRecord record : incomeRecords) {
             incomesID.add(record.getId());
         }
         return incomesID;
@@ -71,25 +78,28 @@ public class BudgetImpl implements Budget {
 
     @Override
     public ArrayList<Long> getExpenseRecordsID() {
+        List<ExpenseRecord> expenseRecords = getExpenseRecords();
         ArrayList<Long> expensesID = new ArrayList<>();
-        for (ExpenseRecord record : expenseRecords){
+
+        for (FinanceRecord record : expenseRecords) {
             expensesID.add(record.getId());
         }
         return expensesID;
     }
 
-    private IncomeRecord doesIncomeRecordExist(long incomeIdNumber) throws NoRecordByID {
-        for (IncomeRecord record : incomeRecords) {
-            if (record.getId() == incomeIdNumber) {
-                return record;
-            }
+    @Override
+    public ArrayList<Long> getFinanceRecordsID() {
+        ArrayList<Long> financeID = new ArrayList<>();
+
+        for (FinanceRecord record : financeRecords) {
+            financeID.add(record.getId());
         }
-        throw new NoRecordByID();
+        return financeID;
     }
 
-    private ExpenseRecord doesExpenseRecordExist(long expenseIdNumber) throws NoRecordByID {
-        for (ExpenseRecord record : expenseRecords) {
-            if (record.getId() == expenseIdNumber) {
+    public FinanceRecord getFinanceRecordByID(long financeIdNumber) throws NoRecordByID {
+        for (FinanceRecord record : financeRecords) {
+            if (record.getId() == financeIdNumber) {
                 return record;
             }
         }
