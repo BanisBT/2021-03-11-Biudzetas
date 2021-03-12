@@ -2,6 +2,7 @@ package org.TomasBarauskas;
 
 import org.TomasBarauskas.excetions.NoRecordByID;
 import org.TomasBarauskas.modul.ExpenseRecord;
+import org.TomasBarauskas.modul.FinanceRecord;
 import org.TomasBarauskas.modul.IncomeRecord;
 import org.TomasBarauskas.service.Budget;
 import org.TomasBarauskas.service.BudgetImpl;
@@ -19,16 +20,16 @@ public class App {
     private static App main = new App();
 
     public static void main(String[] args) {
-        budget.addIncomeRecord(100, "Avansas");
-        budget.addIncomeRecord(200, "Loterija");
-        budget.addIncomeRecord(1000, "Alga");
+        budget.addFinanceRecord(new IncomeRecord(100, "Avansas"));
+        budget.addFinanceRecord(new IncomeRecord(200, "Loterija"));
+        budget.addFinanceRecord(new IncomeRecord(1000, "Alga"));
 
-        budget.addExpenseRecord(10, "Ledai");
-        budget.addExpenseRecord(35, "Baras");
-        budget.addExpenseRecord(100, "TV");
+        budget.addFinanceRecord(new ExpenseRecord(10, "Ledai"));
+        budget.addFinanceRecord(new ExpenseRecord(35, "Baras"));
+        budget.addFinanceRecord(new ExpenseRecord(100, "TV"));
 
         String ivestis = "";
-        while (!ivestis.equals("8")) {
+        while (!ivestis.equals("9")) {
             main.startMenu();
             ivestis = sc.nextLine();
 
@@ -52,9 +53,12 @@ public class App {
                     main.removeExpenseRecordByID();
                     break;
                 case "7":
-                    System.out.println("Jusu saskaitos balansas yra: " + budget.balance());
+                    main.editFinanceRecord();
                     break;
                 case "8":
+                    System.out.println("Jusu saskaitos balansas yra: " + budget.balance());
+                    break;
+                case "9":
                     break;
                 default:
                     System.out.println("Prasome pasirinkti is meniu opciju");
@@ -70,8 +74,9 @@ public class App {
         System.out.println("[4] Gauti islaidu irasus");
         System.out.println("[5] Pasalinti pajemu irasa");
         System.out.println("[6] Pasalinti islaidu irasa");
-        System.out.println("[7] Gauti saskaitos balansa");
-        System.out.println("[8] Iseiti");
+        System.out.println("[7] Iraso redagavimas");
+        System.out.println("[8] Gauti saskaitos balansa");
+        System.out.println("[9] Iseiti");
     }
 
     private void addIncomeRecord() {
@@ -80,7 +85,7 @@ public class App {
         sc.nextLine();
         System.out.println("Pajemu iraso info");
         String incomeInfo = sc.nextLine();
-        budget.addIncomeRecord(incomeAmount, incomeInfo);
+        budget.addFinanceRecord(new IncomeRecord(incomeAmount, incomeInfo));
     }
 
     private void addExpenseRecord() {
@@ -89,7 +94,7 @@ public class App {
         sc.nextLine();
         System.out.println("Islaidu iraso info");
         String expenseInfo = sc.nextLine();
-        budget.addExpenseRecord(expenseAmount, expenseInfo);
+        budget.addFinanceRecord(new ExpenseRecord(expenseAmount, expenseInfo));
     }
 
     private void getIncomesRecords() {
@@ -114,7 +119,7 @@ public class App {
         sc.nextLine();
 
         try {
-            budget.removeIncomeRecord(incomeRecordIdToDelete);
+            budget.removeFinanceRecord(incomeRecordIdToDelete);
             System.out.println("Pajemu irasas sekmingai istrintas");
         } catch (NoRecordByID e) {
             System.out.println("Pagal pateikta ID pajemu irasas nerastas");
@@ -129,10 +134,76 @@ public class App {
         sc.nextLine();
 
         try {
-            budget.removeExpenseRecord(expenseRecordIdToDelete);
+            budget.removeFinanceRecord(expenseRecordIdToDelete);
             System.out.println("Islaidu irasas sekmingai istrintas");
         } catch (NoRecordByID e) {
             System.out.println("Pagal pateikta ID islaidu irasas nerastas");
+        }
+    }
+
+    private void editFinanceRecord() {
+        ArrayList<Long> financeID = budget.getFinanceRecordsID();
+        System.out.println("Kokio iraso informacija noretumet redaguoti?" + "\n" + "Jusu turimu irasu ID sarasas");
+        System.out.println(financeID);
+        long financeRecordIdToEdit = sc.nextLong();
+        sc.nextLine();
+
+        try {
+            FinanceRecord financeRecordToEdit = budget.getFinanceRecordByID(financeRecordIdToEdit);
+            editFinanceRecordAmount(financeRecordToEdit);
+            editFinanceRecordInfo(financeRecordToEdit);
+
+        } catch (NoRecordByID e) {
+            System.out.println("Pagal pateikta ID irasas nerastas");
+        }
+    }
+
+    private void editFinanceRecordAmount(FinanceRecord financeRecord) {
+        String ivestis = "";
+
+        while (!ivestis.equals("2")) {
+            System.out.println("Suma " + financeRecord.getAmount() + "Eur");
+            System.out.println("[1] - Redaguoti  [2] - Toliau");
+            ivestis = sc.nextLine();
+
+            switch (ivestis) {
+                case "1":
+                    System.out.println("Kokia bus nauja iraso suma");
+                    long amountNew = sc.nextLong();
+                    sc.nextLine();
+                    financeRecord.setAmount(amountNew);
+                    ivestis = "2";
+                    break;
+                case "2":
+                    break;
+                default:
+                    System.out.println("Galimi pasirinkimai tik is meniu");
+                    break;
+            }
+        }
+    }
+
+    private void editFinanceRecordInfo(FinanceRecord financeRecord) {
+        String ivestis = "";
+
+        while (!ivestis.equals("2")) {
+            System.out.println("Iraso info - " + financeRecord.getInfo());
+            System.out.println("[1] - Redaguoti  [2] - Toliau");
+            ivestis = sc.nextLine();
+
+            switch (ivestis) {
+                case "1":
+                    System.out.println("Kokia bus nauja iraso informacija");
+                    String infoNew = sc.nextLine();
+                    financeRecord.setInfo(infoNew);
+                    ivestis = "2";
+                    break;
+                case "2":
+                    break;
+                default:
+                    System.out.println("Galimi pasirinkimai tik is meniu");
+                    break;
+            }
         }
     }
 }
