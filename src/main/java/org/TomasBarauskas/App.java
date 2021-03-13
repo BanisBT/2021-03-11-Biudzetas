@@ -6,7 +6,10 @@ import org.TomasBarauskas.modul.FinanceRecord;
 import org.TomasBarauskas.modul.IncomeRecord;
 import org.TomasBarauskas.service.Budget;
 import org.TomasBarauskas.service.BudgetImpl;
+import org.TomasBarauskas.service.FinanceRecordFileManager;
+import org.TomasBarauskas.service.FinanceRecordFileManagerImpl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -16,8 +19,10 @@ import java.util.Scanner;
  */
 public class App {
     private static Budget budget = new BudgetImpl();
+    private static FinanceRecordFileManager fileManager = new FinanceRecordFileManagerImpl();
     private static Scanner sc = new Scanner(System.in);
     private static App main = new App();
+    private static String pathFinanceRecord = "/Users/Gabi/IdeaProjects/2021-03-10-biudzetas/src/main/java/org/TomasBarauskas/files/FinanceRecord.txt";
 
     public static void main(String[] args) {
         budget.addFinanceRecord(new IncomeRecord(100, "Avansas"));
@@ -29,7 +34,7 @@ public class App {
         budget.addFinanceRecord(new ExpenseRecord(100, "TV"));
 
         String ivestis = "";
-        while (!ivestis.equals("9")) {
+        while (!ivestis.equals("11")) {
             main.startMenu();
             ivestis = sc.nextLine();
 
@@ -59,6 +64,12 @@ public class App {
                     System.out.println("Jusu saskaitos balansas yra: " + budget.balance());
                     break;
                 case "9":
+                    main.writeFinanceRecordIntoFile();
+                    break;
+                case "10":
+                    main.getFinanceRecordsFromFile();
+                    break;
+                case "11":
                     break;
                 default:
                     System.out.println("Prasome pasirinkti is meniu opciju");
@@ -76,25 +87,42 @@ public class App {
         System.out.println("[6] Pasalinti islaidu irasa");
         System.out.println("[7] Iraso redagavimas");
         System.out.println("[8] Gauti saskaitos balansa");
-        System.out.println("[9] Iseiti");
+        System.out.println("[9] Irasyti duomenis i faila");
+        System.out.println("[10] Gauti irasus is failo");
+        System.out.println("[11] Iseiti");
     }
 
     private void addIncomeRecord() {
-        System.out.println("Iveskite pajemu suma");
-        long incomeAmount = sc.nextLong();
-        sc.nextLine();
-        System.out.println("Pajemu iraso info");
-        String incomeInfo = sc.nextLine();
-        budget.addFinanceRecord(new IncomeRecord(incomeAmount, incomeInfo));
+        boolean isNumber = true;
+
+        while (isNumber) {
+            System.out.println("Iveskite pajemu suma");
+            String incomeAmountString = sc.nextLine();
+
+            try {
+                float incomeAmount = Float.parseFloat(incomeAmountString);
+                System.out.println("Pajemu iraso info");
+                String incomeInfo = sc.nextLine();
+                budget.addFinanceRecord(new IncomeRecord(incomeAmount, incomeInfo));
+                isNumber = false;
+            } catch (NumberFormatException e) {
+                System.out.println("Klaida! Reikalingas skaicius. Jei bandote ivesti skaiciu per kableli, naudokite taska \".\" vietoje kablelio");
+            }
+        }
     }
 
     private void addExpenseRecord() {
         System.out.println("Iveskite islaidu suma");
-        long expenseAmount = sc.nextLong();
-        sc.nextLine();
-        System.out.println("Islaidu iraso info");
-        String expenseInfo = sc.nextLine();
-        budget.addFinanceRecord(new ExpenseRecord(expenseAmount, expenseInfo));
+        String expenseAmountString = sc.nextLine();
+
+        try {
+            float expenseAmount = Float.parseFloat(expenseAmountString);
+            System.out.println("Islaidu iraso info");
+            String expenseInfo = sc.nextLine();
+            budget.addFinanceRecord(new ExpenseRecord(expenseAmount, expenseInfo));
+        } catch (NumberFormatException e) {
+            System.out.println("Klaida! Reikalingas skaicius. Jei bandote ivesti skaiciu per kableli, naudokite taska \".\" vietoje kablelio");
+        }
     }
 
     private void getIncomesRecords() {
@@ -115,14 +143,18 @@ public class App {
         ArrayList<Long> incomesID = budget.getIncomeRecordsID();
         System.out.println("Koki pajemu irasa noretumet pasalinti?" + "\n" + "Jusu turimu pajemu irasu ID sarasas:");
         System.out.println(incomesID);
-        long incomeRecordIdToDelete = sc.nextLong();
-        sc.nextLine();
+        String incomeRecordIdToDeleteString = sc.nextLine();
 
         try {
-            budget.removeFinanceRecord(incomeRecordIdToDelete);
-            System.out.println("Pajemu irasas sekmingai istrintas");
-        } catch (NoRecordByID e) {
-            System.out.println("Pagal pateikta ID pajemu irasas nerastas");
+            long incomeRecordIdToDelete = Long.parseLong(incomeRecordIdToDeleteString);
+            try {
+                budget.removeFinanceRecord(incomeRecordIdToDelete);
+                System.out.println("Pajemu irasas sekmingai istrintas");
+            } catch (NoRecordByID e) {
+                System.out.println("Pagal pateikta ID pajemu irasas nerastas");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Klaida! Iraso ID gali buti tik skaicius");
         }
     }
 
@@ -130,14 +162,18 @@ public class App {
         ArrayList<Long> expensesID = budget.getExpenseRecordsID();
         System.out.println("Koki islaidu irasa noretumet pasalinti?" + "\n" + "Jusu turimu islaidu irasu ID sarasas:");
         System.out.println(expensesID);
-        long expenseRecordIdToDelete = sc.nextLong();
-        sc.nextLine();
+        String expenseRecordIdToDeleteString = sc.nextLine();
 
         try {
-            budget.removeFinanceRecord(expenseRecordIdToDelete);
-            System.out.println("Islaidu irasas sekmingai istrintas");
-        } catch (NoRecordByID e) {
-            System.out.println("Pagal pateikta ID islaidu irasas nerastas");
+            long expenseRecordIdToDelete = Long.parseLong(expenseRecordIdToDeleteString);
+            try {
+                budget.removeFinanceRecord(expenseRecordIdToDelete);
+                System.out.println("Islaidu irasas sekmingai istrintas");
+            } catch (NoRecordByID e) {
+                System.out.println("Pagal pateikta ID islaidu irasas nerastas");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Klaida! Iraso ID gali buti tik skaicius");
         }
     }
 
@@ -169,10 +205,15 @@ public class App {
             switch (ivestis) {
                 case "1":
                     System.out.println("Kokia bus nauja iraso suma");
-                    long amountNew = sc.nextLong();
-                    sc.nextLine();
-                    financeRecord.setAmount(amountNew);
-                    ivestis = "2";
+                    String amountNewString = sc.nextLine();
+
+                    try {
+                        float amountNew = Float.parseFloat(amountNewString);
+                        financeRecord.setAmount(amountNew);
+                        ivestis = "2";
+                    } catch (NumberFormatException e) {
+                        System.out.println("Klaida! Reikalingas skaicius. Jei bandote ivesti skaiciu per kableli, naudokite taska \".\" vietoje kablelio");
+                    }
                     break;
                 case "2":
                     break;
@@ -205,5 +246,23 @@ public class App {
                     break;
             }
         }
+    }
+    private void writeFinanceRecordIntoFile(){
+        List<FinanceRecord> financeRecords = budget.getFinanceRecords();
+        try {
+            fileManager.financeRecordFileWriter(financeRecords,pathFinanceRecord,false);
+            System.out.println("Duomenys sekmingai irasyti i faila");
+        } catch (IOException e) {
+            System.out.println("Klaida! Nepavyko irasyti duomenu i faila");
+        }
+    }
+    private void getFinanceRecordsFromFile(){
+        List<FinanceRecord> financeRecordsFromFile = null;
+        try {
+            financeRecordsFromFile = fileManager.getFinanceRecordFromFile(pathFinanceRecord);
+        } catch (IOException e) {
+            System.out.println("Klaida! Nepavyko nuskaityti duomenu is failo");
+        }
+        System.out.println(financeRecordsFromFile);
     }
 }

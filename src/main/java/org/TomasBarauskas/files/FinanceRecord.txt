@@ -1,0 +1,6 @@
+Pajemu irasas,0,100.0,Avansas,2021-03-13T10:28:46.707
+Pajemu irasas,1,200.0,Loterija,2021-03-13T10:28:46.715
+Pajemu irasas,2,1000.0,Alga,2021-03-13T10:28:46.715
+Islaidu irasas,3,10.0,Ledai,2021-03-13T10:28:46.715
+Islaidu irasas,4,35.0,Baras,2021-03-13T10:28:46.715
+Islaidu irasas,5,100.0,TV,2021-03-13T10:28:46.715

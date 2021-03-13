@@ -45,10 +45,15 @@ public class BudgetImpl implements Budget {
     }
 
     @Override
-    public long balance() {
+    public List<FinanceRecord> getFinanceRecords() {
+        return financeRecords;
+    }
+
+    @Override
+    public float balance() {
         List<IncomeRecord> incomeRecords = getIncomeRecords();
         List<ExpenseRecord> expenseRecords = getExpenseRecords();
-        long balance = 0;
+        float balance = 0;
 
         for (IncomeRecord record : incomeRecords) {
             balance += record.getAmount();
@@ -60,7 +65,7 @@ public class BudgetImpl implements Budget {
     }
 
     @Override
-    public void removeFinanceRecord(long financeIdNumber) throws NoRecordByID {
+    public void removeFinanceRecord(float financeIdNumber) throws NoRecordByID {
         FinanceRecord financeRecord = getFinanceRecordByID(financeIdNumber);
         financeRecords.remove(financeRecord);
     }
@@ -97,7 +102,7 @@ public class BudgetImpl implements Budget {
         return financeID;
     }
 
-    public FinanceRecord getFinanceRecordByID(long financeIdNumber) throws NoRecordByID {
+    public FinanceRecord getFinanceRecordByID(float financeIdNumber) throws NoRecordByID {
         for (FinanceRecord record : financeRecords) {
             if (record.getId() == financeIdNumber) {
                 return record;
