@@ -15,9 +15,11 @@ public interface Budget {
 
     List<ExpenseRecord> getExpenseRecords();
 
-    long balance();
+    List<FinanceRecord> getFinanceRecords();
 
-    void removeFinanceRecord(long FinanceIdNumber) throws NoRecordByID;
+    float balance();
+
+    void removeFinanceRecord(float FinanceIdNumber) throws NoRecordByID;
 
     ArrayList<Long> getIncomeRecordsID();
 
@@ -25,5 +27,5 @@ public interface Budget {
 
     ArrayList<Long> getFinanceRecordsID();
 
-    FinanceRecord getFinanceRecordByID(long financeRedordID) throws NoRecordByID;
+    FinanceRecord getFinanceRecordByID(float financeRedordID) throws NoRecordByID;
 }

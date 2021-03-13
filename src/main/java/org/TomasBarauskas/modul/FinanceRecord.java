@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 public class FinanceRecord {
     private static long counter = 0;
     private long id;
-    private long amount;
+    private float amount;
     private String info;
     private LocalDateTime dateTime;
 
@@ -14,7 +14,7 @@ public class FinanceRecord {
         this.id = counter++;
     }
 
-    public FinanceRecord(long amount, String info) {
+    public FinanceRecord(float amount, String info) {
         this();
         this.amount = amount;
         this.info = info;
@@ -38,16 +38,27 @@ public class FinanceRecord {
             return id == financeRecord.getId();
         }
     }
+    public String stringForPrintWriter(){
+        return String.format("%d,%s,%s,%s",id,amount,info,dateTime);
+    }
 
     public long getId() {
         return id;
     }
 
-    public long getAmount() {
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public float getAmount() {
         return amount;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 
