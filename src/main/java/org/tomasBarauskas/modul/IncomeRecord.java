@@ -1,4 +1,4 @@
-package org.TomasBarauskas.modul;
+package org.tomasBarauskas.modul;
 
 public class IncomeRecord extends FinanceRecord {
 
