@@ -1,9 +1,10 @@
-package org.TomasBarauskas.modul;
+package org.tomasBarauskas.modul;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class FinanceRecord {
+public class FinanceRecord implements Serializable {
     private static long counter = 0;
     private long id;
     private float amount;

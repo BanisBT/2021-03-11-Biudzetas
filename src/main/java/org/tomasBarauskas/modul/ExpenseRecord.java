@@ -1,4 +1,4 @@
-package org.TomasBarauskas.modul;
+package org.tomasBarauskas.modul;
 
 public class ExpenseRecord extends FinanceRecord {
     private static final String EXPENSE_RECORD = "Islaidu irasas";

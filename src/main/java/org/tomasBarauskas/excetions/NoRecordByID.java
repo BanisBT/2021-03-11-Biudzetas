@@ -1,4 +1,4 @@
-package org.TomasBarauskas.excetions;
+package org.tomasBarauskas.excetions;
 
 public class NoRecordByID extends Exception{
 }

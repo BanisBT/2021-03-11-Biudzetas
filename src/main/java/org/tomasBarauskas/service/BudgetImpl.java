@@ -1,18 +1,17 @@
-package org.TomasBarauskas.service;
+package org.tomasBarauskas.service;
 
-import org.TomasBarauskas.excetions.NoRecordByID;
-import org.TomasBarauskas.modul.ExpenseRecord;
-import org.TomasBarauskas.modul.FinanceRecord;
-import org.TomasBarauskas.modul.IncomeRecord;
+import org.tomasBarauskas.excetions.NoRecordByID;
+import org.tomasBarauskas.modul.ExpenseRecord;
+import org.tomasBarauskas.modul.FinanceRecord;
+import org.tomasBarauskas.modul.IncomeRecord;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BudgetImpl implements Budget {
-    private List<FinanceRecord> financeRecords;
+    private List<FinanceRecord> financeRecords = new ArrayList<>();
 
     public BudgetImpl() {
-        financeRecords = new ArrayList<>();
     }
 
     @Override
